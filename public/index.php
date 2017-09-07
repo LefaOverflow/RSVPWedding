@@ -4,11 +4,13 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
+require '../src/RSVP/db.php';
+
 $app = new \Slim\App;
 
 require '../src/RSVP/RSVP.php';
 
-require '../src/RSVP/db.php';
+
 
 // Run app
 $app->run();
