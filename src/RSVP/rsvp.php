@@ -73,6 +73,27 @@ $app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $respon
    }
 });
 
+//Get All Coming Guests
+$app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $response) {
+
+   $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'Yes'";
+  
+   try{
+       $db = new db();
+       $db = $db->connect();
+
+       $stmt = $db->query($sql);
+       $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+       $db = null;
+
+       echo json_encode($Guests);
+        
+   }catch(PDOException $e){
+       echo '{"error": {"text": '.$e->getMessage().'}';
+   }
+});
+
+
 //RSVP
 $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response) {
 
@@ -150,7 +171,14 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
      //Make the RSVP
     if(isInvited($Name,$Surname,$Cell,$Invite) == True && isRSVPed($Name,$Surname,$Cell) == False)
     {
-        $Status =   "Yes";
+        if($Invite == "Not Coming")
+        {
+           $Status =  "No";  
+        }else
+        {
+           $Status =   "Yes";
+        }
+       
         $sql = "UPDATE guestlist SET
                 Name = :Name,
                 Surname = :Surname,
