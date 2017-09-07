@@ -74,9 +74,29 @@ $app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $respon
 });
 
 //Get All Coming Guests
-$app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $response) {
+$app->get('/api/RSVP/GetComingGuests', function (Request $request, Response $response) {
 
    $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'Yes'";
+  
+   try{
+       $db = new db();
+       $db = $db->connect();
+
+       $stmt = $db->query($sql);
+       $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+       $db = null;
+
+       echo json_encode($Guests);
+        
+   }catch(PDOException $e){
+       echo '{"error": {"text": '.$e->getMessage().'}';
+   }
+});
+
+//Get All Guests Not Coming
+$app->get('/api/RSVP/GetNotComingGuests', function (Request $request, Response $response) {
+
+   $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'No'";
   
    try{
        $db = new db();
@@ -174,7 +194,8 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
         if($Invite == "Not Coming")
         {
            $Status =  "No";  
-        }else
+        }
+        else
         {
            $Status =   "Yes";
         }
