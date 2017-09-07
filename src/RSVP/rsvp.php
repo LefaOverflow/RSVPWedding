@@ -75,11 +75,11 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
 
             if(empty($Guests))
             {
-              echo '[{"notice": "Guest is not Invited!"}]'; 
+                 return False; //Guest Not Invited
             }
             else
             {
-              echo json_encode($Guests);
+                 return True; //Guest Invited
             }
 
         }catch(PDOException $e){
@@ -118,7 +118,6 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
         }catch(PDOException $e){
             echo '{"error": {"text": '.$e->getMessage().'}';
         }
-
     }
     
 
