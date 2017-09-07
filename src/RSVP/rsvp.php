@@ -89,7 +89,7 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
     }
 
     //Check if Guest has already RSVP'ed
-    function isRVSPed($Name,$Surname,$Cell)
+    function isRSVPed($Name,$Surname,$Cell)
     {
         $sql = "SELECT * FROM guestlist
                 WHERE Name    = '$Name'
@@ -108,11 +108,11 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
 
             if(empty($Guests))
             {
-              echo '[{"notice": "Guest hasnt RSVPed yet!"}]'; 
+                 return False; //Guest Not Yet RSVP'ed
             }
             else
             {
-              echo json_encode($Guests);
+                 return True; //Guest Already RSVP'ed
             }
 
         }catch(PDOException $e){
