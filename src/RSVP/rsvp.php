@@ -57,7 +57,7 @@ try{
 $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response) {
 
     //Checks if guest is really invited
-    function isInvited($Name,$Surname,$Cell)
+    function isInvited($Name,$Surname,$Cell,$Invite)
     {
         $sql = "SELECT * FROM guestlist
                 WHERE Name    = '$Name'
@@ -128,13 +128,16 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
     $Invite =   $request->getParam('Invite');
 
      //Make the RSVP
-    if(isInvited($Name,$Surname,$Cell) == True && isRSVPed($Name,$Surname,$Cell) == False)
+    if(isInvited($Name,$Surname,$Cell,$Invite) == True && isRSVPed($Name,$Surname,$Cell) == False)
     {
         $Status =   "Yes";
         $sql = "UPDATE guestlist SET
-        (Name,Surname,Cell,InvitedTo,RSVPStatus)
-        VALUES 
-        (:Name,:Surname,:Cell,:Invite,:Status)";
+                Name = :Name,
+                Surname = :Surname,
+                Cell = :Cell,
+                InvitedTo = :Invite,
+                RSVPStatus = :Status
+                WHERE Cell = '$Cell'"; 
 
         try{
         $db = new db();
@@ -168,7 +171,7 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
             echo '{"error": {"text": '.$e->getMessage().'}';
         }
     }
-    elseif(isInvited($Name,$Surname,$Cell) == False)
+    elseif(isInvited($Name,$Surname,$Cell,$Invite) == False)
     {
         echo '[{"notice": "Sorry, You Are Not Invited!"}]'; 
     }
