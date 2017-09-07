@@ -53,6 +53,26 @@ try{
 
 });
 
+//Get All Invited Guests
+$app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $response) {
+
+   $sql = "SELECT * FROM guestlist";
+  
+   try{
+       $db = new db();
+       $db = $db->connect();
+
+       $stmt = $db->query($sql);
+       $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+       $db = null;
+
+       echo json_encode($Guests);
+        
+   }catch(PDOException $e){
+       echo '{"error": {"text": '.$e->getMessage().'}';
+   }
+});
+
 //RSVP
 $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response) {
 
