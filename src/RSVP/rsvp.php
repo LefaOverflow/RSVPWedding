@@ -50,7 +50,47 @@ try{
    }catch(PDOException $e){
        echo '{"error": {"text": '.$e->getMessage().'}';
    }
-  
+
+});
+
+
+//RSVP
+$app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response) {
+
+    //Checks if guest is really invited
+    function isInvited($Name,$Surname,$Cell)
+    {
+        $sql = "SELECT * FROM guestlist
+                WHERE Name    = '$Name'
+                AND   Surname = '$Surname'
+                AND   Cell    = '$Cell'
+                ";
+       try
+        {
+            $db = new db();
+            $db = $db->connect();
+
+            $stmt = $db->query($sql);
+            $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+            $db = null;
+
+            if(empty($Guests))
+            {
+              echo '[{"notice": "Guest is not Invited!"}]'; 
+            }
+            else
+            {
+              echo json_encode($Guests);
+            }
+
+        }catch(PDOException $e){
+            echo '{"error": {"text": '.$e->getMessage().'}';
+        }
+
+    }
+
+    
 
 
 });
+
