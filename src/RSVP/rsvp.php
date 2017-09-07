@@ -63,6 +63,7 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
                 WHERE Name    = '$Name'
                 AND   Surname = '$Surname'
                 AND   Cell    = '$Cell'
+                AND   InvitedTo = '$Invite'
                 ";
        try
         {
@@ -119,8 +120,61 @@ $app->post('/api/RSVP/MakeRSVP', function (Request $request, Response $response)
             echo '{"error": {"text": '.$e->getMessage().'}';
         }
     }
-    
 
+    //REAL CODE BEGINS
+    $Name =     $request->getParam('Name');
+    $Surname =  $request->getParam('Surname');
+    $Cell =     $request->getParam('Cell');
+    $Invite =   $request->getParam('Invite');
 
+     //Make the RSVP
+    if(isInvited($Name,$Surname,$Cell) == True && isRSVPed($Name,$Surname,$Cell) == False)
+    {
+        $Status =   "Yes";
+        $sql = "UPDATE guestlist SET
+        (Name,Surname,Cell,InvitedTo,RSVPStatus)
+        VALUES 
+        (:Name,:Surname,:Cell,:Invite,:Status)";
+
+        try{
+        $db = new db();
+        $db = $db->connect();
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindParam(':Name',         $Name);
+        $stmt->bindParam(':Surname',      $Surname);
+        $stmt->bindParam(':Cell',         $Cell);
+        $stmt->bindParam(':Invite',       $Invite);
+        $stmt->bindParam(':Status',       $Status);
+        
+        $stmt->execute();
+
+        if(empty($Url))
+        {
+            echo '[{"notice": "Successfully RSVPed!"}]'; 
+        }
+        else
+        {
+            echo"
+            <script>
+        
+            window.location.replace('".$Url."');
+
+            </script>";
+        }
+      
+        }catch(PDOException $e){
+            echo '{"error": {"text": '.$e->getMessage().'}';
+        }
+    }
+    elseif(isInvited($Name,$Surname,$Cell) == False)
+    {
+        echo '[{"notice": "Sorry, You Are Not Invited!"}]'; 
+    }
+    elseif(isRSVPed($Name,$Surname,$Cell) == True)
+    {
+        echo '[{"notice": "Sorry, You Already RSVP-ed!"}]'; 
+    }
 });
 
