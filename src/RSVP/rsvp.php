@@ -73,10 +73,50 @@ $app->get('/api/RSVP/GetAllGuests', function (Request $request, Response $respon
    }
 });
 
-//Get All Coming Guests
-$app->get('/api/RSVP/GetComingGuests', function (Request $request, Response $response) {
+//Get All Coming Guests - BOTH
+$app->get('/api/RSVP/GetAllComingGuests', function (Request $request, Response $response) {
 
    $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'Yes'";
+  
+   try{
+       $db = new db();
+       $db = $db->connect();
+
+       $stmt = $db->query($sql);
+       $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+       $db = null;
+
+       echo json_encode($Guests);
+        
+   }catch(PDOException $e){
+       echo '{"error": {"text": '.$e->getMessage().'}';
+   }
+});
+
+//Get All Coming Guests - KHALL
+$app->get('/api/RSVP/KHallGuests', function (Request $request, Response $response) {
+
+   $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'Yes' AND InvitedTo = 'KHall'";
+  
+   try{
+       $db = new db();
+       $db = $db->connect();
+
+       $stmt = $db->query($sql);
+       $Guests = $stmt->fetchAll(PDO::FETCH_OBJ);
+       $db = null;
+
+       echo json_encode($Guests);
+        
+   }catch(PDOException $e){
+       echo '{"error": {"text": '.$e->getMessage().'}';
+   }
+});
+
+//Get All Coming Guests - RECEPTION
+$app->get('/api/RSVP/ReceptionGuests', function (Request $request, Response $response) {
+
+   $sql = "SELECT * FROM guestlist WHERE RSVPStatus = 'Yes' AND InvitedTo = 'Reception'";
   
    try{
        $db = new db();
