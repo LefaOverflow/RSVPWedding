@@ -10,7 +10,5 @@ $app = new \Slim\App;
 
 require '../src/RSVP/RSVP.php';
 
-
-
 // Run app
 $app->run();
